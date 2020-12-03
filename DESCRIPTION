@@ -1,0 +1,12 @@
+Package: dynamik
+Type: Package
+Title: Calculates indicators for dynamic analysis with LIDAR data (Title Case)
+Version: 0.1.0
+Author: Claudia HUERTAS
+Maintainer: The package maintainer <clauhuertas@gmail.com>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
