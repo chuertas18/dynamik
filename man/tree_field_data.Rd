@@ -2,9 +2,9 @@
 % Please edit documentation in R/tree_field_data.R
 \name{tree_field_data}
 \alias{tree_field_data}
-\title{Query to postgres database}
+\title{Tree field data}
 \usage{
-tree_field_data(database)
+tree_field_data(database, year0, year1)
 }
 \arguments{
 \item{database}{Dataframe containing the database with the following columns:idtree,dbh,censusyear,dbh_dead,family,genus,wd,xfield,yfield, the two years must be included their difference is made by the attribute censusyear}

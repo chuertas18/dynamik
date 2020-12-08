@@ -1,9 +1,9 @@
 
 #
 # dataframe=d0
-# shp_grid<-("D:/CLAUDIA/PAPERS/5_Productivity/Scripts_AGB_incremental/DATA/GRILLE/Plots120x120.shp")
+shp_grid<-grilla
 #
-# sq=120
+sq=125
 #}columna= # numero columna de shapefile
 #
 # head(dataframe)
@@ -131,8 +131,7 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
 
   ## Normalization###
   cols_period =  c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "N_D", "N_R")
-  cols_square = c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D",
-                  "agb0", "agv0", "ba0", "agb1", "agv1", "ba1","N_D", "N_R")
+  cols_square = c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "agb0", "agv0", "ba0", "agb1", "agv1", "ba1","N0","N1","N_D", "N_R")
 
 
 

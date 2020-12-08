@@ -1,4 +1,4 @@
-#' @title
+#' @title Tree field data
 #' @description Connection to the postgres database, where inventory data is stored.
 #' @param database Dataframe containing the database with the following columns:idtree,dbh,censusyear,dbh_dead,family,genus,wd,xfield,yfield, the two years must be included their difference is made by the attribute censusyear
 #' @param
@@ -7,29 +7,59 @@
 #' @examples
 
 # database=datos
-# year0=2015
-# year1=2019
+# year0=2013
+# year1=2015
 
-tree_field_data<-function(database,year0,year1){
+tree_field_data <- function(database,year0,year1) {
   library(data.table)
   ## Database subset for each year
-  period=year1-year0
-  datos<-as.data.table(database) # The subset becomes more efficient if it is transformed into datatable
-  extract_year0=na.omit(unique(datos[censusyear==year0 & codealive_cor==T, .(idtree,dbh,censusyear,dbh_dead,family,genus,wd,xfield,yfield,xutm,yutm)])) ##### Revisar
-  extract_year1=na.omit(unique(datos[censusyear==year1 & codealive_cor==T, .(idtree,dbh,censusyear,dbh_dead,family,genus,wd,xfield,yfield,xutm,yutm)])) ##### Revisar
-  df=unique(merge(extract_year0, extract_year1, by="idtree", all=T))
+  period = year1 - year0
+  datos <-
+    as.data.table(database) # The subset becomes more efficient if it is transformed into datatable
+  extract_year0 = na.omit(unique(datos[censusyear == year0 &
+                                         codealive_cor == T, .(idtree,
+                                                               dbh,
+                                                               censusyear,
+                                                               dbh_dead,
+                                                               family,
+                                                               genus,
+                                                               wd,
+                                                               xfield,
+                                                               yfield,
+                                                               xutm,
+                                                               yutm)])) ##### Revisar
+  extract_year1 = na.omit(unique(datos[censusyear == year1 &
+                                         codealive_cor == T, .(idtree,
+                                                               dbh,
+                                                               censusyear,
+                                                               dbh_dead,
+                                                               family,
+                                                               genus,
+                                                               wd,
+                                                               xfield,
+                                                               yfield,
+                                                               xutm,
+                                                               yutm)])) ##### Revisar
+  df = unique(merge(extract_year0, extract_year1, by = "idtree", all = T))
   # head(df)
 
   ## Classification of status between dead, survivors and recruits For this you must first replace NA of dbh by zero
   df$dbh.x[is.na(df$dbh.x)] <- 0
   df$dbh.y[is.na(df$dbh.y)] <- 0
   # Classify the status
-  df$state = factor(ifelse(df$dbh.x > 0 & df$dbh.y > 0, 'survivors',
-                           ifelse(df$dbh.x > 0 & df$dbh.y == 0, 'dead', 'recruits')),
-                    levels = c('survivors', 'dead', 'recruits'))
+  df$state = factor(
+    ifelse(
+      df$dbh.x > 0 & df$dbh.y > 0,
+      'survivors',
+      ifelse(df$dbh.x > 0 &
+               df$dbh.y == 0, 'dead', 'recruits')
+    ),
+    levels = c('survivors', 'dead', 'recruits')
+  )
 
 
-  df$dbh_dead <- ifelse(is.na(df$dbh_dead.x) , df$dbh_dead.y, df$dbh_dead.x)
+  df$dbh_dead <-
+    ifelse(is.na(df$dbh_dead.x) , df$dbh_dead.y, df$dbh_dead.x)
   df$wd <- ifelse(is.na(df$wd.x) , df$wd.y, df$wd.x)
   df$family <- ifelse(is.na(df$family.x) , df$family.y, df$family.x)
   df$genus <- ifelse(is.na(df$genus.x) , df$genus.y, df$genus.x)
@@ -39,37 +69,80 @@ tree_field_data<-function(database,year0,year1){
   df$yutm <- ifelse(is.na(df$yutm.x) , df$yutm.y, df$yutm.x)
 
 
-  df$dbh.y[which(df$state=="dead")]<-df$dbh_dead[which(df$state=="dead")]
+  df$dbh.y[which(df$state == "dead")] <-
+    df$dbh_dead[which(df$state == "dead")]
 
   # select_cols<-c("idtree", "dbh.x", "censusyear.x", "dbh_dead.x",  "dbh.y", "censusyear.y", "state", "dbh_dead",
   #                "family", "genus","wd", "xfield", "yfield")
-  select_cols<-c("idtree", "dbh.x", "censusyear.x", "dbh.y", "censusyear.y", "state",
-                 "family", "genus","wd", "xfield", "yfield","xutm","yutm")
+  select_cols <-
+    c(
+      "idtree",
+      "dbh.x",
+      "censusyear.x",
+      "dbh.y",
+      "censusyear.y",
+      "state",
+      "family",
+      "genus",
+      "wd",
+      "xfield",
+      "yfield",
+      "xutm",
+      "yutm"
+    )
 
-  df<-df[ , select_cols, with = FALSE]
-  names(df)<-c("idtree", "dbh0", "censusyear0", "dbh1", "censusyear1",
-               "state", "family", "genus","wd", "xfield", "yfield","xutm","yutm")
+  df <- df[, select_cols, with = FALSE]
+  names(df) <-
+    c(
+      "idtree",
+      "dbh0",
+      "censusyear0",
+      "dbh1",
+      "censusyear1",
+      "state",
+      "family",
+      "genus",
+      "wd",
+      "xfield",
+      "yfield",
+      "xutm",
+      "yutm"
+    )
   # names(df)<-c("idtree", "dbh0", "censusyear0", "dbh_dead0", "dbh1", "censusyear1",
   #              "state", "dbh_dead", "family", "genus","wd", "xfield", "yfield")
 
   #head(df)
 
   # Ecuacion area basal
-  basal_area=function(vec_dbh){(((vec_dbh/2)^2*pi)*0.0001)}
+  basal_area = function(vec_dbh) {
+    (((vec_dbh / 2) ^ 2 * pi) * 0.0001)
+  }
 
   ##### calculate aGB and BA at the alive individual level
   ## 0.001 is applied to change from AGB (kg) to Tons
-  df$agb0<-agb_eq(df$wd,df$dbh0,height_eq(df$dbh0,"Low"),df$family,df$genus)
-  df$agv0<-agb_eq(1,df$dbh0,height_eq(df$dbh0,"Low"),df$family,df$genus)
-  df$ba0<-basal_area(df$dbh0)
+  df$agb0 <-
+    agb_eq(df$wd,
+           df$dbh0,
+           height_eq(df$dbh0, "Low"),
+           df$family,
+           df$genus)
+  df$agv0 <-
+    agb_eq(1, df$dbh0, height_eq(df$dbh0, "Low"), df$family, df$genus)
+  df$ba0 <- basal_area(df$dbh0)
 
 
 
-  df$agb1<-agb_eq(df$wd,df$dbh1,height_eq(df$dbh1,"Low"),df$family,df$genus)
-  df$agv1<-agb_eq(1,df$dbh1,height_eq(df$dbh1,"Low"),df$family,df$genus)
-  df$ba1<-basal_area(df$dbh1)
-  df$period<-period
-  df$per<-paste0(year0,"-",year1)
+  df$agb1 <-
+    agb_eq(df$wd,
+           df$dbh1,
+           height_eq(df$dbh1, "Low"),
+           df$family,
+           df$genus)
+  df$agv1 <-
+    agb_eq(1, df$dbh1, height_eq(df$dbh1, "Low"), df$family, df$genus)
+  df$ba1 <- basal_area(df$dbh1)
+  df$period <- period
+  df$per <- paste0(year0, "-", year1)
 
   ##### calcular aGB y BA a nivel indivduo MUERTOS
   ## 0.001 is applied to change from AGB (kg) to Tons
@@ -82,6 +155,3 @@ tree_field_data<-function(database,year0,year1){
   # df$ba_dead[which(df$state!="dead")]<-NA
   return(df)
 }
-
-
-
