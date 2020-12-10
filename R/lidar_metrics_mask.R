@@ -1,14 +1,14 @@
 # dir Directorio principal donde estan los datosd
 # Make the Loop Database
-# dir<-"D:/CLAUDIA/PAPERS/5_Productivity/Scripts_AGB_incremental"
-# nom_out<-"SAR20_12ppm"
-# decimated<-"FALSE"
-# year0<-2013
-# year1<-2015
-# chm0<-"DATA/CHM/ANPP4/CHM2013_SAR20_full.tif"
-# chm1<-"DATA/CHM/ANPP4/CHM2015_SAR20_12ppm.tif"
-# shp_grid<-"D:/GitHub/Paper_productivity/DATA/GRILLE/grille_125_s38.shp"
-# mask<-"D:/CLAUDIA/PAPERS/5_Productivity/Scripts_AGB_incremental/DATA/CHM/leitold/gaps_leitold_2013_2015_surface.tif"
+dir<-"D:/CLAUDIA/PAPERS/5_Productivity/Scripts_AGB_incremental"
+nom_out<-"SAR20_12ppm_paysage"
+decimated<-"FALSE"
+year0<-2013
+year1<-2015
+chm0<-"DATA/CHM/ANPP4/CHM2013_SAR20_full.tif"
+chm1<-"DATA/CHM/ANPP4/CHM2015_SAR20_12ppm.tif"
+shp_grid<-"D:/GitHub/Paper_productivity/DATA/GRILLE/grille_125_paysage.shp"
+mask<-"D:/CLAUDIA/PAPERS/5_Productivity/Scripts_AGB_incremental/DATA/CHM/leitold/gaps_leitold_2013_2015_surface.tif"
 
 lidar_metrics_mask<-function(dir,chm0,chm1,year0,year1,decimated,nom_out,shp_grid,mask)
 {
@@ -292,12 +292,13 @@ lidar_metrics_mask<-function(dir,chm0,chm1,year0,year1,decimated,nom_out,shp_gri
   # mask1=mask(delta1513, G1513,maskvalue=1)
 
   delta0=chm1-chm0
-  # delta=delta0*mask0 #(Delta_NG)
-  delta1=crop(delta0,mask0)
-  mask1=crop(mask0,delta1)
-  delta2=mask(delta1,mask1,maskvalue=1)#(Delta_NG)
-  delta=focal(delta2, w=matrix(1,3,3), fun=mean,na.rm=TRUE)
+  delta1=focal(delta, w=matrix(1,3,3), fun=mean,na.rm=TRUE)
+  delta2=crop(delta1,mask0)
+  mask1=crop(mask0,delta2)
+  delta3=mask(delta2,mask1,maskvalue=1)#(Delta_NG)
+
   #plot(delta)
+  # delta=chm1-chm0
 
   #delta <- cover(delta1, delta0)
   # plot(delta)
