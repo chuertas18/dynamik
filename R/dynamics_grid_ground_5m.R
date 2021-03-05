@@ -8,11 +8,13 @@
 #
 # head(dataframe)
 dataframe=d0
-shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_250.shp"
-sq=250
+shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_5.shp"
+sq=5
+
 ###################
-dynamics_grid_ground<-function(dataframe,shp_grid,sq){
+dynamics_grid_ground5<-function(dataframe,shp_grid,sq){
   library(raster)
+  
   shp_grid<-shapefile(shp_grid)
   crs(shp_grid) <- "+init=epsg:32622"
   grid<-shp_grid[order(shp_grid$id),]
@@ -49,17 +51,23 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
 
 
 
+  
   g_db<-merge_grid(grid,id_tree_list)
-  names(g_db)[columna]<-"square"
+  #names(g_db)[columna]<-"square"
   # names(g_db)<-c("idtree", "square", "xfield", "yfield")
 
-  database<-merge(dataframe,g_db[,c("idtree","square","Parcelle","trait")],by = c("idtree","square"))
+  #database<-merge(dataframe,g_db[,c("idtree","square","Parcelle","trait")],by = c("idtree","square"))
+  if (sq==5) {
+    database<-merge(dataframe,g_db,by = c("idtree")) # 5
+    names(database)[names(database) == "square.y"] <- "square"
+  } 
+  
 
 
 
   # head(g_db)
   # head(database)
-  # head(database)
+  # head(dataframe)
 
   db_dead<-database[which(database$state=='dead'),]
   #db_surv<-database[which(database$state=='survivors'),]
@@ -114,7 +122,6 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
  # Stocks
   agg_stock0=aggregate(db_surv_dead[,c("agb0","agv0","ba0")],by = list(square=db_surv_dead$square),FUN = sum)
   agg_stock1=aggregate(db_surv_rec[,c("agb1","agv1","ba1")],by = list(square=db_surv_rec$square),FUN = sum)
-
   agg_stock_N0=aggregate(db_surv_dead[,c("idtree")],by = list(square=db_surv_dead$square),FUN = stem_num)
   names(agg_stock_N0)[2]<-"N0"
   agg_stock_N1=aggregate(db_surv_rec[,c("idtree")],by = list(square=db_surv_rec$square),FUN = stem_num)
@@ -125,8 +132,9 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   agg_WD1=aggregate(db_surv_rec[,c("wd")],by = list(square=db_surv_rec$square),FUN = mean)
   names(agg_WD1)[2]<-"WD1"
 
-  agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "square"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","Parcelle","trait")]))))
-  #head(agg_union)
+  agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "square"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square")]))))
+  # agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "square"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","Parcelle","trait")]))))
+  
 
 
 
@@ -144,6 +152,7 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   ### Function to normalize periods
   norm_period_fun<-function(x,period) { (as.numeric(as.character(x)))/period}
 
+  
   # Function that allows to normalize by surface, the variable that is indicated is the resolution
   # in square meters and a variable in hectares is obtained
   # res_square in metres
@@ -153,6 +162,7 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   data_norm<-agg_union
   data_norm[,cols_period] = apply(data_norm[,cols_period], 2, norm_period_fun,period=unique(dataframe$period))
   data_norm[,cols_square] = apply(data_norm[,cols_square], 2, norm_square_fun, res_square=sq)
+  data_norm[is.na(data_norm)] <- 0
 
   return(data_norm)
 

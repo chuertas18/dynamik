@@ -91,11 +91,11 @@ lidar_metrics_gaps<-function(dir,chm,year,nom_out,shp_grid)
   #   return(sd)
   # }
 
-  sum=function(v){
-    v=na.omit(v)
-    som=sum(v)
-    return(som)
-  }
+  # sum=function(v){
+  #   v=na.omit(v)
+  #   som=sum(v)
+  #   return(som)
+  # }
 
 
   not_na=function(v){ #  mean d'accroissement sans normalisation
@@ -137,7 +137,7 @@ lidar_metrics_gaps<-function(dir,chm,year,nom_out,shp_grid)
 
 
   ###########################################################################################
-  chm=raster(paste0(dir,"/",file))
+  chm=raster(file)
   crs(chm) <- "+init=epsg:32622"
   #chm<-cleanupCHM(chm,60) # My library RasterMachine
   range(chm[],na.rm = T)
@@ -181,16 +181,16 @@ lidar_metrics_gaps<-function(dir,chm,year,nom_out,shp_grid)
   # data_s$carre=60
   #data_s<-data_s[,c("square_60", "acc_med", "acc_med2", "acc_mean", "year0", "year1","square")]
   data_s<-merge(data_s,df_shp_grid[,c("square","Parcelle","trait")],by="square")
-  # names(data_s)<-c("square_id", "acc_med", "acc_med2", "acc_mean", "year0", "year1","square","trait")
-  names(data_s)[1]<-"square_id"
+  # names(data_s)<-c("square", "acc_med", "acc_med2", "acc_mean", "year0", "year1","square","trait")
+  names(data_s)[1]<-"square"
   head(data_s)
 
 
   #table1<-rbind(data_60,data_120,data_240)
-  table1<-data_s
-  table2<-cbind(nombre,dec,file0,file1)
-  table3<-cbind(table1,table2)
-  return(table3)
+  # table1<-data_s
+  # table2<-cbind(nombre,file0,file1)
+  # table3<-cbind(table1,table2)
+  return(data_s)
 }
 
 # head(table3)

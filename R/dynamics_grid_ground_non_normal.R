@@ -7,11 +7,8 @@
 #}columna= # numero columna de shapefile
 #
 # head(dataframe)
-dataframe=d0
-shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_250.shp"
-sq=250
 ###################
-dynamics_grid_ground<-function(dataframe,shp_grid,sq){
+dynamics_grid_ground_nonnrm<-function(dataframe,shp_grid,sq){
   library(raster)
   shp_grid<-shapefile(shp_grid)
   crs(shp_grid) <- "+init=epsg:32622"
@@ -43,8 +40,6 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
     columna=3
   } else if (sq==240|sq==250) {
     columna=3
-  }else if (sq==5) {
-    columna=6
   }else{print("Error shapefile")}
 
 
@@ -53,7 +48,7 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   names(g_db)[columna]<-"square"
   # names(g_db)<-c("idtree", "square", "xfield", "yfield")
 
-  database<-merge(dataframe,g_db[,c("idtree","square","Parcelle","trait")],by = c("idtree","square"))
+  database<-merge(dataframe,g_db[,c("idtree","square","Parcelle","trait")],by = "idtree")
 
 
 
@@ -152,7 +147,7 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
 
   data_norm<-agg_union
   data_norm[,cols_period] = apply(data_norm[,cols_period], 2, norm_period_fun,period=unique(dataframe$period))
-  data_norm[,cols_square] = apply(data_norm[,cols_square], 2, norm_square_fun, res_square=sq)
+  # data_norm[,cols_square] = apply(data_norm[,cols_square], 2, norm_square_fun, res_square=sq)
 
   return(data_norm)
 
