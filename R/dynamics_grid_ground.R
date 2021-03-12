@@ -7,9 +7,9 @@
 #}columna= # numero columna de shapefile
 #
 # head(dataframe)
-dataframe=d0
-shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_250.shp"
-sq=250
+# dataframe=d0_SP16
+# shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125.shp"
+# sq=125
 ###################
 dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   library(raster)
@@ -37,23 +37,26 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   }
 
 
-  if (sq==60|sq==62|sq==62.5) {
-    columna=2
-  } else if (sq==120|sq==125) {
-    columna=3
-  } else if (sq==240|sq==250) {
-    columna=3
-  }else if (sq==5) {
-    columna=6
-  }else{print("Error shapefile")}
-
+  
 
 
   g_db<-merge_grid(grid,id_tree_list)
-  names(g_db)[columna]<-"square"
+  
+  if (sq==60|sq==62|sq==62.5) {
+    columna=2
+  } else if (sq==125) {
+    #columna=5
+    names(g_db)[names(g_db) == "square_125"]<-"square"
+  } else if (sq==250) {
+    names(g_db)[names(g_db) == "square_250"]<-"square"
+  }else if (sq==5) {
+    columna=6
+  }else{print("Error shapefile")}
+  
+  # names(g_db)[columna]<-"square"
   # names(g_db)<-c("idtree", "square", "xfield", "yfield")
-
-  database<-merge(dataframe,g_db[,c("idtree","square","Parcelle","trait")],by = c("idtree","square"))
+  g_db$square=as.numeric(g_db$square)
+  database<-merge(dataframe,g_db[,c("idtree","square","parcelle","trait")],by = c("idtree","square"))
 
 
 
@@ -125,7 +128,7 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   agg_WD1=aggregate(db_surv_rec[,c("wd")],by = list(square=db_surv_rec$square),FUN = mean)
   names(agg_WD1)[2]<-"WD1"
 
-  agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "square"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","Parcelle","trait")]))))
+  agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "square"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","parcelle","trait")]))))
   #head(agg_union)
 
 
