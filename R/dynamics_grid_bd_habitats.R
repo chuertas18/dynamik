@@ -7,11 +7,11 @@
 #}columna= # numero columna de shapefile
 #
 #head(dataframe)
-database=d0
-sq=250
+# database=d0
+# sq=250
 # sq_column=d0$square_250
 ###################
-dynamics_grid_ground_habitats<-function(database,sq){
+dynamics_grid_bd_habitats<-function(database,sq){
   library(raster)
   # shp_grid<-shapefile(shp_grid)
   # crs(shp_grid) <- "+init=epsg:32622"
@@ -149,13 +149,14 @@ dynamics_grid_ground_habitats<-function(database,sq){
   # head(agg_union)
 
 
+  
   data<-agg_union
   # return(agg_union)
   
   
   ## Normalization###
-  cols_period =  c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "N_D", "N_R")
-  cols_square = c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "agb0", "agv0", "ba0", "agb1", "agv1", "ba1","N0","N1","N_D", "N_R")
+  cols_period =  c("AGB_G", "BA_G", "AGB_D", "BA_D", "N_D", "N_R")
+  cols_square = c("AGB_G", "BA_G", "AGB_D",  "BA_D", "agb0", "ba0", "agb1", "ba1","N0","N1","N_D", "N_R")
   
   
   
@@ -170,7 +171,7 @@ dynamics_grid_ground_habitats<-function(database,sq){
 
   
   data_norm<-agg_union
-  data_norm[,cols_period] = apply(data_norm[,cols_period], 2, norm_period_fun,period=unique(dataframe$period))
+  data_norm[,cols_period] = apply(data_norm[,cols_period], 2, norm_period_fun,period=unique(database$period))
   data_norm[,cols_square] = apply(data_norm[,cols_square], 2, norm_area, area=agg_union$area)
   
   return(data_norm)

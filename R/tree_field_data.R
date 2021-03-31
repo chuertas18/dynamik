@@ -6,16 +6,16 @@
 #' @export tree_field_data
 #' @examples
 
-# database=datos_hab
-# year0=1991
-# year1=1993
+database=datos
+year0=1991
+year1=1993
+p16=FALSE
 
-tree_field_data <- function(database,year0,year1) {
+tree_field_data <- function(database,year0,year1,p16) {
   library(data.table)
   ## Database subset for each year
   period = year1 - year0
-  datos <-
-    as.data.table(database) # The subset becomes more efficient if it is transformed into datatable
+  datos <-as.data.table(database) # The subset becomes more efficient if it is transformed into datatable
   extract_year0 = na.omit(unique(datos[censusyear == year0 &
                                          codealive_cor == T, .(idtree,
                                                                dbh,
@@ -66,8 +66,7 @@ tree_field_data <- function(database,year0,year1) {
   )
 
 
-  df$dbh_dead <-
-    ifelse(is.na(df$dbh_dead.x) , df$dbh_dead.y, df$dbh_dead.x)
+  df$dbh_dead <-ifelse(is.na(df$dbh_dead.x) , df$dbh_dead.y, df$dbh_dead.x)
   df$wd <- ifelse(is.na(df$wd.x) , df$wd.y, df$wd.x)
   df$family <- ifelse(is.na(df$family.x) , df$family.y, df$family.x)
   df$genus <- ifelse(is.na(df$genus.x) , df$genus.y, df$genus.x)
@@ -82,8 +81,7 @@ tree_field_data <- function(database,year0,year1) {
 
 
 
-  df$dbh.y[which(df$state == "dead")] <-
-    df$dbh_dead[which(df$state == "dead")]
+  df$dbh.y[which(df$state == "dead")] <-df$dbh_dead[which(df$state == "dead")]
 
   
   # select_cols<-c("idtree", "dbh.x", "censusyear.x", "dbh_dead.x",  "dbh.y", "censusyear.y", "state", "dbh_dead",
@@ -140,26 +138,24 @@ tree_field_data <- function(database,year0,year1) {
     (((vec_dbh / 2) ^ 2 * pi) * 0.0001)
   }
   ##### calculate aGB and BA at the alive individual level
-  ## 0.001 is applied to change from AGB (kg) to Tons
-  df$agb0 <-
-    agb_eq(df$wd,
-           df$dbh0,
-           height_eq(df$dbh0, "Low"),
-           df$family,
-           df$genus)
-  df$agv0 <-
-    agb_eq(1, df$dbh0, height_eq(df$dbh0, "Low"), df$family, df$genus)
+  ## 0.001 is applied to change from AGB (kg) to Tons # Without P16
+  if (p16==FALSE) {
+    df$agb0 <- agb_eq(df$wd,df$dbh0,height_eq(df$dbh0, "Low"),df$family,df$genus)
+    df$agv0 <-agb_eq(1, df$dbh0, height_eq(df$dbh0, "Low"), df$family, df$genus)
+    df$agb1 <-agb_eq(df$wd,df$dbh1, height_eq(df$dbh1, "Low"), df$family,df$genus)
+    df$agv1 <-agb_eq(1, df$dbh1, height_eq(df$dbh1, "Low"), df$family, df$genus)
+  } else {
+    print("Remember that you only have to enter the values for plot P16")
+    df$agb0 <- agb_eq(df$wd,df$dbh0,height_eq(df$dbh0, "High"),df$family,df$genus)
+    df$agv0 <-agb_eq(1, df$dbh0, height_eq(df$dbh0, "High"), df$family, df$genus)
+    df$agb1 <-agb_eq(df$wd,df$dbh1, height_eq(df$dbh1, "High"), df$family,df$genus)
+    df$agv1 <-agb_eq(1, df$dbh1, height_eq(df$dbh1, "High"), df$family, df$genus)
+  }
+  
+  
+  
+  
   df$ba0 <- basal_area(df$dbh0)
-
-
-  df$agb1 <-
-    agb_eq(df$wd,
-           df$dbh1,
-           height_eq(df$dbh1, "Low"),
-           df$family,
-           df$genus)
-  df$agv1 <-
-    agb_eq(1, df$dbh1, height_eq(df$dbh1, "Low"), df$family, df$genus)
   df$ba1 <- basal_area(df$dbh1)
   df$period <- period
   df$per <- paste0(year0, "-", year1)

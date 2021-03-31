@@ -7,8 +7,8 @@
 #' @examples
 
 # database=datos_hab
-# year0=1991
-# year1=1993
+# year0=2019
+# year1=2019
 
 
 tree_field_data_bd_habitats <- function(database,year0,year1) {
@@ -16,8 +16,7 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
   ## Database subset for each year
   period = year1 - year0
   datos <-as.data.table(database) # The subset becomes more efficient if it is transformed into datatable
-  extract_year0 = na.omit(unique(datos[censusyear == year0 &
-                                         codealive_cor == T, .(idtree,
+  extract_year0 = na.omit(unique(datos[censusyear == year0 & codealive_cor == T, .(idtree,
                                                                dbh,
                                                                censusyear,
                                                                dbh_dead,
@@ -43,8 +42,30 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
   
 
   
-  extract_year1 = na.omit(unique(datos[censusyear == year1 &
-                                         codealive_cor == T, .(idtree,
+  # extract_year1 = na.omit(unique(datos[censusyear == year1 &
+  #                                        codealive_cor == T, .(idtree,
+  #                                                              dbh,
+  #                                                              censusyear,
+  #                                                              dbh_dead,
+  #                                                              family,
+  #                                                              genus,
+  #                                                              xfield,
+  #                                                              yfield,
+  #                                                              xutm,
+  #                                                              yutm,
+  #                                                              habitat,
+  #                                                              square_250,
+  #                                                              square_125,
+  #                                                              plot,
+  #                                                              trait,
+  #                                                              ba,
+  #                                                              agb,
+  #                                                              wd,
+  #                                                              area,
+  #                                                              ba_dead,
+  #                                                              agb_dead)])) ##### Revisar
+  # 
+  extract_year1 = na.omit(unique(datos[censusyear == year1 & codealive_cor == T, .(idtree,
                                                                dbh,
                                                                censusyear,
                                                                dbh_dead,
@@ -64,7 +85,9 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
                                                                wd,
                                                                area,
                                                                ba_dead,
-                                                               agb_dead)])) ##### Revisar
+                                                               agb_dead
+                                         )])) 
+  
   df = unique(merge(extract_year0, extract_year1, by = "idtree", all = T))
   # head(df)
 
@@ -119,61 +142,57 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
   
   # select_cols<-c("idtree", "dbh.x", "censusyear.x", "dbh_dead.x",  "dbh.y", "censusyear.y", "state", "dbh_dead",
   #                "family", "genus","wd", "xfield", "yfield")
-  select_cols <-
-    c(
-      "idtree",
-      "dbh.x",
-      "censusyear.x",
-      "dbh.y",
-      "censusyear.y",
-      "state",
-      "family",
-      "genus",
-      "wd",
-      "xfield",
-      "yfield",
-      "xutm",
-      "yutm",
-      "habitat",
-      "square_250",
-      "square_125",
-      "parcela",
-      "treat",
-      "ba.x",
-      "ba.y",
-      "agb.x",
-      "agb.y",
-      "area"
+  select_cols <-c( "idtree",
+                    "dbh.x",
+                    "censusyear.x",
+                    "dbh.y",
+                    "censusyear.y",
+                    "state",
+                    "family",
+                    "genus",
+                    "wd",
+                    "xfield",
+                    "yfield",
+                    "xutm",
+                    "yutm",
+                    "habitat",
+                    "square_250",
+                    "square_125",
+                    "parcela",
+                    "treat",
+                    "ba.x",
+                    "ba.y",
+                    "agb.x",
+                    "agb.y",
+                    "area"
     )
   
   
 
   df <- df[, select_cols, with = FALSE]
-  names(df) <-
-    c(
-      "idtree",
-      "dbh0",
-      "censusyear0",
-      "dbh1",
-      "censusyear1",
-      "state",
-      "family",
-      "genus",
-      "wd",
-      "xfield",
-      "yfield",
-      "xutm",
-      "yutm",
-      "habitat",
-      "square_250",
-      "square_125",
-      "parcela",
-      "treat",
-      "ba0",
-      "ba1",
-      "agb0",
-      "agb1",
-      "area"
+  names(df) <-c("idtree",
+                "dbh0",
+                "censusyear0",
+                "dbh1",
+                "censusyear1",
+                "state",
+                "family",
+                "genus",
+                "wd",
+                "xfield",
+                "yfield",
+                "xutm",
+                "yutm",
+                "habitat",
+                "square_250",
+                "square_125",
+                "parcela",
+                "treat",
+                "ba0",
+                "ba1",
+                "agb0",
+                "agb1",
+                "area"
     )
   # names(df)<-c("idtree", "dbh0", "censusyear0", "dbh_dead0", "dbh1", "censusyear1",
   #              "state", "dbh_dead", "family", "genus","wd", "xfield", "yfield")

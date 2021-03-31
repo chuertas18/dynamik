@@ -3,36 +3,34 @@
 
 #
 # decimated<-"FALSE"
-# dir<-"D:/temp/gaps2"
-# chm<-"/gaps_leitold_2009_2015_surface.tif"
+# dir<-"D:\temp\delta"
+# gaps<-"/gaps_leitold_2009_2015_surface.tif"
 # year<-"2009_2015"
 # nom_out<-"gaps_leitold_2009_2015_surface"
 # shp_grid<-"D:/GitHub/Paper_productivity/DATA/GRILLE/grille_125_gaps.shp"
 #
-dir<-"D:/temp/gaps12ppm"
-chm<-"gaps_leitold_2013_2019_surface.tif"
-year<-"2013_2019"
-nom_out<-"gaps_leitold_2013_2019_surface"
-shp_grid<-"D:/GitHub/Paper_productivity/DATA/GRILLE/grille_250.shp"
+# dir<-"D:/temp/delta"
+# gaps_nom<-"Delta_maxCHM_FO_PAR_2015_2019_Plot_1_Leitold"
+# # couche<-"Delta_maxCHM_FO_PAR_2015_2019_Plot_1_Leitold.shp"
+# year<-"2015_2019"
+# nom_out<-"gaps_leitold_2015_2019_surface"
+# shp_grid<-"Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
 
 # year1<-2015
 
 # chm1<-"DATA/CHM/ANPP4/CHM2015_SAR20_12ppm.tif"
 
 
-lidar_metrics_gaps<-function(dir,chm,year,nom_out,shp_grid)
+lidar_metrics_gaps<-function(dir,gaps_nom,year,nom_out,shp_grid)
 {
   nombre=nom_out
   y=year
-  file=chm
+  file=paste0(dir,"/",gaps_nom,"_surface.tif")
+  file_shp=paste0(dir,"/",gaps_nom,".shp")
   print(paste0("Procesando... ",nom_out))
-
-
 
   #compare median and med metrics of canopy dynamics to predict basal area change
   setwd(dir)
-
-
 
   #######################################################################################
   #######################################################################################
@@ -40,108 +38,29 @@ lidar_metrics_gaps<-function(dir,chm,year,nom_out,shp_grid)
 
   #library(RasterMachine) # My library
   library(raster)
-  # library(rgdal)
-  # library(maptools)
-  # library(carData)
-  # library(lme4)
-  # library(car)
-  # library(dplyr)
-  # library(ggplot2)
-
+  
+  ####################################################################################################
+  ################################################################ FUNCTIONS
   ### KO BORRARLA
-  cleanupCHM<-function(chm,treshold){
-    r=chm
+  cleanupCHM<-function(gaps,treshold){
+    r=gaps
     require(raster)
     r[r<0] <- 0
     r[r>treshold] <- NA
     return(r)
   }
 
-  ####################################################################################################
-  ################################################################ FUNCTIONS
-
-  # med=function(v){ #  mediane d'accroissement sans normalisation
-  #   v=na.omit(v)
-  #   med=median(v)
-  #   return(med)
-  # }
-  #
-  #
-  # mean=function(v){ #  mediane d'accroissement sans normalisation
-  #   v=na.omit(v)
-  #   moy=mean(v)
-  #   return(moy)
-  # }
-
-  # max=function(v){ #  mediane d'accroissement sans normalisation
-  #   v=na.omit(v)
-  #   max=max(v)
-  #   return(max)
-  # }
-  #
-  # min=function(v){ #  mediane d'accroissement sans normalisation
-  #   v=na.omit(v)
-  #   min=min(v)
-  #   return(min)
-  # }
-  #
-  # sd=function(v){ #  mediane d'accroissement sans normalisation
-  #   v=na.omit(v)
-  #   sd=sd(v)
-  #   return(sd)
-  # }
-
-  # sum=function(v){
-  #   v=na.omit(v)
-  #   som=sum(v)
-  #   return(som)
-  # }
-
-
-  not_na=function(v){ #  mean d'accroissement sans normalisation
-    v=na.omit(v)
-    surf=length(v)
-    return(surf)
-  }
-
-  sur=function(v){ #  mean d'accroissement sans normalisation
-    v=v
-    surf=length(v)
-    return(surf)
-  }
-
-
-
-  chm_s <- function (test){
-    sq=shp_grid@data$square
-    sq_ID=unique(sq)
-
-    res=c()
-    for (i in 1:length(sq_ID))
-    {
-      sel=which(sq==sq_ID[i])
-      v=c()
-      for (j in sel) {v=c(v,test[[j]])}
-      temp=data.frame(square=sq_ID[i],sum=sum(v),not_na=not_na(v),sur=sur(v))
-      res=rbind(res,temp)
-    }
-    return(res)
-  }
-
-
-  lidar_union<-function(chm_grid,function_delta,square){
-    data0<-function_delta(chm_grid)
-    return(data0)
-  }
-
-
 
   ###########################################################################################
-  chm=raster(file)
-  crs(chm) <- "+init=epsg:32622"
-  #chm<-cleanupCHM(chm,60) # My library RasterMachine
-  range(chm[],na.rm = T)
-
+  gaps=raster(file)
+  crs(gaps) <- "+init=epsg:32622"
+  #gaps<-cleanupCHM(gaps,60) # My library RasterMachine
+  range(gaps[],na.rm = T)
+  
+  gaps_shp=shapefile(file_shp)
+  crs(gaps_shp) <- "+init=epsg:32622"
+  #gaps<-cleanupCHM(gaps,60) # My library RasterMachine
+  range(gaps[],na.rm = T)
 
 
   # grid (60, 120, 240)
@@ -153,7 +72,7 @@ lidar_metrics_gaps<-function(dir,chm,year,nom_out,shp_grid)
   #names(df_shp_grid)<-c("id", "square", "Parcelle", "trait")
 
 
-  # plot(chm)
+  # plot(gaps)
   # plot(shp_grid,add=T)
   #
   #### This function allows the calculation of net and brute change
@@ -165,25 +84,34 @@ lidar_metrics_gaps<-function(dir,chm,year,nom_out,shp_grid)
 
 
   ### DELTA AGB
-  chm_grid<-raster::extract(chm, shp_grid)
+  gaps_grid<-raster::extract(gaps, shp_grid,fun=sum,sp=TRUE)
+  gaps_grid<-as.data.frame(gaps_grid)
+  names(gaps_grid)[names(gaps_grid) == paste0(gaps_nom,"_surface")]<-"lei"
 
+  #gaps_shp<-over(gaps_shp, shp_grid, returnList = TRUE)
+  gaps_shp=intersect(shp_grid,gaps_shp)
+  head(gaps_shp)
+  gaps_shp_agg=aggregate(gaps_shp[,c("id_gaps")],by = list(square=gaps_shp$square),FUN = length)
 
-
+  data_s=merge(gaps_grid[,c("square","trait","square_250","parcelle","lei")],as.data.frame(gaps_shp_agg),by="square")
+  head(data_s)
+  names(data_s)[names(data_s) == "id_gaps"]<-"N_gaps"
+ #summary(toto@data)  
   # cols_period<-c("acc_med", "acc_med2", "acc_mean", "aff_med", "aff_mean", "acc_mean2", "aff_med2",
   #                "aff_mean2", "aff_sum", "acc_sum","absmed","absmean")
   #
   # ### Function to normalize periods
   # norm_period_fun<-function(x,period) { (as.numeric(as.character(x)))/period}
 
-  data_s<-lidar_union(chm_grid,chm_s,"square")
+  # data_s<-lidar_union(gaps_grid,chm_s,"square")
   # data_s[,cols_period] = apply(data_s[,cols_period], 2, norm_period_fun,period=period)
   data_s$year=y
   # data_s$carre=60
   #data_s<-data_s[,c("square_60", "acc_med", "acc_med2", "acc_mean", "year0", "year1","square")]
-  data_s<-merge(data_s,df_shp_grid[,c("square","Parcelle","trait")],by="square")
-  # names(data_s)<-c("square", "acc_med", "acc_med2", "acc_mean", "year0", "year1","square","trait")
-  names(data_s)[1]<-"square"
-  head(data_s)
+  # data_s<-merge(data_s,df_shp_grid[,c("square","Parcelle","trait")],by="square")
+  # # names(data_s)<-c("square", "acc_med", "acc_med2", "acc_mean", "year0", "year1","square","trait")
+  # names(data_s)[1]<-"square"
+  # head(data_s)
 
 
   #table1<-rbind(data_60,data_120,data_240)

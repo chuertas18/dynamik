@@ -5,40 +5,65 @@
 #' @return database with the calculated values of AGB, basal area and biovolume for two periods
 #' @export tree_field_data
 #' @examples
+#' 
+#' OJO remplazar con el tree_field_data
 
-# database=datos_postgres
-# year0_p16=2005
-# year1_p16=2010
+database=datos[which(datos$plot==16),]
+year0_p16=2015
+year1_p16=2019
 
 tree_field_data_p16 <- function(database,year0_p16,year1_p16) {
   library(data.table)
   ## Database subset for each year
   period = year1_p16 - year0_p16
   datos <-as.data.table(database[which(database$plot==16),]) # The subset becomes more efficient if it is transformed into datatable
-  extract_year0 = na.omit(unique(datos[censusyear == year0_p16 &
-                                         codealive_cor == T, .(idtree,
-                                                               dbh,
-                                                               censusyear,
-                                                               dbh_dead,
-                                                               family,
-                                                               genus,
-                                                               xfield,
-                                                               yfield,
-                                                               xutm,
-                                                               yutm,
-                                                               plot)])) ##### Revisar
-  extract_year1 = na.omit(unique(datos[censusyear == year1_p16 &
-                                         codealive_cor == T, .(idtree,
-                                                               dbh,
-                                                               censusyear,
-                                                               dbh_dead,
-                                                               family,
-                                                               genus,
-                                                               xfield,
-                                                               yfield,
-                                                               xutm,
-                                                               yutm,
-                                                               plot)])) ##### Revisar
+  extract_year0 = na.omit(unique(datos[censusyear == year0_p16 & codealive_cor == T, .(idtree,
+                                                                                   dbh,
+                                                                                   censusyear,
+                                                                                   dbh_dead,
+                                                                                   family,
+                                                                                   genus,
+                                                                                   xfield,
+                                                                                   yfield,
+                                                                                   xutm,
+                                                                                   yutm,
+                                                                                   habitat,
+                                                                                   square_250,
+                                                                                   square_125,
+                                                                                   square_62,
+                                                                                   plot,
+                                                                                   trait,
+                                                                                   ba,
+                                                                                   agb,
+                                                                                   wd,
+                                                                                   area,
+                                                                                   ba_dead,
+                                                                                   agb_dead
+  )])) 
+  extract_year1 = na.omit(unique(datos[censusyear == year1 & codealive_cor == T, .(idtree,
+                                                                                   dbh,
+                                                                                   censusyear,
+                                                                                   dbh_dead,
+                                                                                   family,
+                                                                                   genus,
+                                                                                   xfield,
+                                                                                   yfield,
+                                                                                   xutm,
+                                                                                   yutm,
+                                                                                   habitat,
+                                                                                   square_250,
+                                                                                   square_125,
+                                                                                   square_62,
+                                                                                   plot,
+                                                                                   trait,
+                                                                                   ba,
+                                                                                   agb,
+                                                                                   wd,
+                                                                                   area,
+                                                                                   ba_dead,
+                                                                                   agb_dead
+  )])) 
+
   # extract_year0 = na.omit(unique(datos[censusyear == year0_p16 &
   #                                        codealive_cor == T, .(idtree,
   #                                                              dbh,
@@ -108,39 +133,35 @@ tree_field_data_p16 <- function(database,year0_p16,year1_p16) {
 
   # select_cols<-c("idtree", "dbh.x", "censusyear.x", "dbh_dead.x",  "dbh.y", "censusyear.y", "state", "dbh_dead",
   #                "family", "genus","wd", "xfield", "yfield","xutm","yutm","habitat","parcela","treat")
-  select_cols <-
-    c(
-      "idtree",
-      "dbh.x",
-      "censusyear.x",
-      "dbh.y",
-      "censusyear.y",
-      "state",
-      "family",
-      "genus",
-      "wd",
-      "xfield",
-      "yfield",
-      "xutm",
-      "yutm"
+  select_cols <-c("idtree",
+                  "dbh.x",
+                  "censusyear.x",
+                  "dbh.y",
+                  "censusyear.y",
+                  "state",
+                  "family",
+                  "genus",
+                  "wd",
+                  "xfield",
+                  "yfield",
+                  "xutm",
+                  "yutm"
     )
 
   df <- df[, select_cols, with = FALSE]
-  names(df) <-
-    c(
-      "idtree",
-      "dbh0",
-      "censusyear0",
-      "dbh1",
-      "censusyear1",
-      "state",
-      "family",
-      "genus",
-      "wd",
-      "xfield",
-      "yfield",
-      "xutm",
-      "yutm"
+  names(df) <- c("idtree",
+                "dbh0",
+                "censusyear0",
+                "dbh1",
+                "censusyear1",
+                "state",
+                "family",
+                "genus",
+                "wd",
+                "xfield",
+                "yfield",
+                "xutm",
+                "yutm"
     )
   # names(df)<-c("idtree", "dbh0", "censusyear0", "dbh_dead0", "dbh1", "censusyear1",
   #              "state", "dbh_dead", "family", "genus","wd", "xfield", "yfield")
@@ -160,8 +181,7 @@ tree_field_data_p16 <- function(database,year0_p16,year1_p16) {
   #          height_eq(df$dbh0, "High"),
   #          df$family,
   #          df$genus)
-  df$agv0 <-
-    agb_eq(1, df$dbh0, height_eq(df$dbh0, "High"), df$family, df$genus)
+  df$agv0 <-agb_eq(1, df$dbh0, height_eq(df$dbh0, "High"), df$family, df$genus)
   
   ########### P16
   # df$agb0[which(df$tr)] <-
@@ -170,8 +190,7 @@ tree_field_data_p16 <- function(database,year0_p16,year1_p16) {
   #          height_eq(df$dbh0, "High"),
   #          df$family,
   #          df$genus)
-  df$agv0 <-
-    agb_eq(1, df$dbh0, height_eq(df$dbh0, "High"), df$family, df$genus)
+  df$agv0 <-agb_eq(1, df$dbh0, height_eq(df$dbh0, "High"), df$family, df$genus)
   
   
   

@@ -7,8 +7,8 @@
 #}columna= # numero columna de shapefile
 #
 # head(dataframe)
-# dataframe=d0_SP16
-# shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125.shp"
+# dataframe=d0
+# shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
 # sq=125
 ###################
 dynamics_grid_ground<-function(dataframe,shp_grid,sq){
