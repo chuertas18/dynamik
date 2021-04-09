@@ -6,7 +6,7 @@
 #' @export tree_field_data
 #' @examples
 
-# database=datos_hab
+# database=datos
 # year0=2019
 # year1=2019
 
@@ -29,6 +29,7 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
                                                                habitat,
                                                                square_250,
                                                                square_125,
+                                                               square_62,
                                                                plot,
                                                                trait,
                                                                ba,
@@ -78,6 +79,7 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
                                                                habitat,
                                                                square_250,
                                                                square_125,
+                                                               square_62,
                                                                plot,
                                                                trait,
                                                                ba,

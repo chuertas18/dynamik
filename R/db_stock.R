@@ -1,21 +1,21 @@
-# year=2015
-# year_p16=2015
-# unit="habitat" ###"habitat", "square"
-# sq=250
-# p16=TRUE
-# palms=TRUE
-# write=TRUE
+year=2015
+year_p16=2015
+unit="square" ###"habitat", "square"
+sq=250
+p16=TRUE
+palms=TRUE
+write=TRUE
 
 # db_stock(year=2015,year_p16=2015,unit="square",sq=250,p16=TRUE,palms=TRUE,write=TRUE)
 
 # Function to calculate the stock for a year, for different square units or habitats, including palms or not and the P16.
-db_stock<-function(year,year_p16,unit,sq,p16,palms,write){
+db_stock<-function(year,year_p16,unit,sq,p16,palms,write,grilla){
   if(exists("datos_postgres")==FALSE){
-    datos_postgres=request_postgres(dbname="paracou",host="localhost",port=5432,user="postgres",password="postgres",sql_postgres="SELECT DISTINCT * FROM  paracou.bd_plots_corrected_habitats WHERE dbh>9.6 ORDER BY idtree, censusyear;")
+    datos_postgres=request_postgres(dbname="paracou",host="localhost",port=5432,user="postgres",password="postgres",sql_postgres="SELECT DISTINCT * FROM  paracou.bd_plots_corrected_habitats WHERE dbh>9.6 AND codealive_cor IS NOT NULL ORDER BY idtree, censusyear;")
   }
   
   datos=as.data.frame(datos_postgres)
-  cols= c("idtree", "codealive_cor","censusyear", "family", "genus", "species","dbh","ba", "wd", "wd_level", "agb", "xutmr", 
+  cols= c("idtree", "codealive_cor","censusyear", "family", "genus", "species","dbh","ba", "wd", "wd_level", "agb", "agv","xutmr", 
           "yutmr", "square_250", "square_125", "square_62","habitat", "plot", "trait")
   
   # Selection in the database by year
@@ -49,7 +49,7 @@ db_stock<-function(year,year_p16,unit,sq,p16,palms,write){
   ## Reassigned the unit or analysis square
   if(unit=="square"){
     library(raster)
-    grid<-shapefile("Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_62.shp")
+    grid<-shapefile(grilla)
     crs(grid) <- "+init=epsg:32622"
     grid=as.data.frame(grid)
     if (sq==62|sq==62.5) {
@@ -68,7 +68,7 @@ db_stock<-function(year,year_p16,unit,sq,p16,palms,write){
     ### Ad ferry shapefile - Habitats
     # # Surface Ferry
     library(raster)
-    ferry<-shapefile("Y:/users/ClaudiaHuertas/Mortality/Data/Ferry/TopoFerry_corr_s62.shp")
+    ferry<-shapefile(grilla)
     crs(ferry) <- "+init=epsg:32622"
     ferry=as.data.frame(ferry)
     if (sq==62|sq==62.5) {
@@ -94,7 +94,7 @@ db_stock<-function(year,year_p16,unit,sq,p16,palms,write){
   
   
   # Aggregation of stock variables
-  db_sum=aggregate(db[,c("ba","agb")], by=list(square=db$square), sum)
+  db_sum=aggregate(db[,c("ba","agb","agv")], by=list(square=db$square), sum)
   db_len=aggregate(list(n=db[,c("idtree")]), by=list(square=db$square), length)
   db_mean=aggregate(db[,c("dbh","wd")], by=list(square=db$square), mean)
   
