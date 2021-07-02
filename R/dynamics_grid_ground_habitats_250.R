@@ -1,18 +1,11 @@
 
-#
+
 # dataframe=d0
-#shp_grid<-grilla
-# shp_grid<-"F:/GitHub/Paper_productivity/DATA/GRILLE/grille_125_s38.shp"
-#sq=125
-#}columna= # numero columna de shapefile
-#
-# head(dataframe)
-dataframe=d0
-shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Ferry/TopoFerry_corr_s250_boucle.shp"
-sq="250-habitat" # "125-habitat" / "250-habitat" / 250 / 125
-norm=TRUE
+# shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Ferry/TopoFerry_corr_s250_boucle.shp"
+# sq="250-habitat" # "125-habitat" / "250-habitat" / 250 / 125
+# norm=TRUE
 ###################
-dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
+dynamics_grid_ground_habitats_250<-function(dataframe,shp_grid,sq,norm){
   library(raster)
   shp_grid<-shapefile(shp_grid)
   crs(shp_grid) <- "+init=epsg:32622"
@@ -78,30 +71,36 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
   AGB_sq=database$id_union[which(database$state=='recruits')]
   AGB_rec=database$agb1[which(database$state=='recruits')]- vol10cmDBH*(database$wd[which(database$state=='recruits')])^0.976 # Adjust growth for recruits only recruited trees, only biomass above 10cm dbh
   AGB_rec=ifelse(AGB_rec<0,0,AGB_rec)
-  AGV_rec=database$agv1[which(database$state=='recruits')]- vol10cmDBH*(1)^0.976 # Adjust growth for recruits only recruited trees, only biomass above 10cm dbh
-  AGV_rec=ifelse(AGV_rec<0,0,AGV_rec)
+  # AGV_rec=database$agv1[which(database$state=='recruits')]- vol10cmDBH*(1)^0.976 # Adjust growth for recruits only recruited trees, only biomass above 10cm dbh
+  # AGV_rec=ifelse(AGV_rec<0,0,AGV_rec)
   BA_rec=database$ba1[which(database$state=='recruits')] - ((pi*25)*0.0001) # Adjust growth for recruits
   BA_rec=ifelse(BA_rec<0,0,BA_rec)
-  agg_rec0=data.frame(id_union=AGB_sq,AGB_rec=AGB_rec,AGV_rec=AGV_rec,BA_rec=BA_rec)
-  agg_rec=aggregate(agg_rec0[,c("AGB_rec","AGV_rec","BA_rec")],by = list(id_union=agg_rec0$id_union),FUN = sum)
-
+  #agg_rec0=data.frame(id_union=AGB_sq,AGB_rec=AGB_rec,AGV_rec=AGV_rec,BA_rec=BA_rec)
+  agg_rec0=data.frame(id_union=AGB_sq,AGB_rec=AGB_rec,BA_rec=BA_rec)
+  #agg_rec=aggregate(agg_rec0[,c("AGB_rec","AGV_rec","BA_rec")],by = list(id_union=agg_rec0$id_union),FUN = sum)
+  agg_rec=aggregate(agg_rec0[,c("AGB_rec","BA_rec")],by = list(id_union=agg_rec0$id_union),FUN = sum)
+  
 
 
   # Croissance - Productivity
-  agg_surv_dead = aggregate(db_surv_dead[,c("agb0","ba0","agv0","agb1","agv1","ba1")],by = list(id_union=db_surv_dead$id_union),FUN = sum)
+  #agg_surv_dead = aggregate(db_surv_dead[,c("agb0","ba0","agv0","agb1","agv1","ba1")],by = list(id_union=db_surv_dead$id_union),FUN = sum)
+  agg_surv_dead = aggregate(db_surv_dead[,c("agb0","ba0","agb1","ba1")],by = list(id_union=db_surv_dead$id_union),FUN = sum)
   agg_surv_dead0=merge(agg_surv_dead,agg_rec,by="id_union",all.x=T)
   agg_surv_dead0[is.na(agg_surv_dead0)] = 0
   AGB_G=(agg_surv_dead0$agb1-agg_surv_dead0$agb0)+agg_surv_dead0$AGB_rec
-  AGV_G=(agg_surv_dead0$agv1-agg_surv_dead0$agv0)+agg_surv_dead0$AGV_rec
+  # AGV_G=(agg_surv_dead0$agv1-agg_surv_dead0$agv0)+agg_surv_dead0$AGV_rec
   BA_G=(agg_surv_dead0$ba1-agg_surv_dead0$ba0)+agg_surv_dead0$BA_rec
-  agg_G=data.frame(id_union=agg_surv_dead0$id_union,AGB_G=AGB_G,AGV_G=AGV_G,BA_G=BA_G)
-
+  #agg_G=data.frame(id_union=agg_surv_dead0$id_union,AGB_G=AGB_G,AGV_G=AGV_G,BA_G=BA_G)
+  agg_G=data.frame(id_union=agg_surv_dead0$id_union,AGB_G=AGB_G,BA_G=BA_G)
+  
   # agg_surv_dead0[which(agg_surv_dead$id_union==46),]
   # agg_G
 
   # Mortality
-  agg_D = aggregate(db_dead[,c("agb1","agv1","ba1")],by = list(id_union=db_dead$id_union),FUN = sum)
-  names(agg_D)=c("id_union","AGB_D","AGV_D","BA_D")
+  agg_D = aggregate(db_dead[,c("agb1","ba1")],by = list(id_union=db_dead$id_union),FUN = sum)
+  #agg_D = aggregate(db_dead[,c("agb1","agv1","ba1")],by = list(id_union=db_dead$id_union),FUN = sum)
+  names(agg_D)=c("id_union","AGB_D","BA_D")
+  # names(agg_D)=c("id_union","AGB_D","AGV_D","BA_D")
 
 
   # Dead number of stems
@@ -117,9 +116,11 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
 
 
  # Stocks
-  agg_stock0=aggregate(db_surv_dead[,c("agb0","agv0","ba0")],by = list(id_union=db_surv_dead$id_union),FUN = sum)
-  agg_stock1=aggregate(db_surv_rec[,c("agb1","agv1","ba1")],by = list(id_union=db_surv_rec$id_union),FUN = sum)
-
+  #agg_stock0=aggregate(db_surv_dead[,c("agb0","agv0","ba0")],by = list(id_union=db_surv_dead$id_union),FUN = sum)
+  agg_stock0=aggregate(db_surv_dead[,c("agb0","ba0")],by = list(id_union=db_surv_dead$id_union),FUN = sum)
+  #agg_stock1=aggregate(db_surv_rec[,c("agb1","agv1","ba1")],by = list(id_union=db_surv_rec$id_union),FUN = sum)
+  agg_stock1=aggregate(db_surv_rec[,c("agb1","ba1")],by = list(id_union=db_surv_rec$id_union),FUN = sum)
+  
   agg_stock_N0=aggregate(db_surv_dead[,c("idtree")],by = list(id_union=db_surv_dead$id_union),FUN = stem_num)
   names(agg_stock_N0)[2]<-"N0"
   agg_stock_N1=aggregate(db_surv_rec[,c("idtree")],by = list(id_union=db_surv_rec$id_union),FUN = stem_num)
@@ -151,8 +152,12 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
   
   ## Normalization###
   
-  cols_period =  c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "N_D", "N_R")
-  cols_square = c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "agb0", "agv0", "ba0", "agb1", "agv1", "ba1","N0","N1","N_D", "N_R")
+  cols_period =  c("AGB_G", "BA_G", "AGB_D",  "BA_D", "N_D", "N_R")
+  cols_square = c("AGB_G",  "BA_G", "AGB_D",  "BA_D", "agb0",  "ba0", "agb1",  "ba1","N0","N1","N_D", "N_R")
+  
+  # cols_period =  c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "N_D", "N_R")
+  # cols_square = c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "agb0", "agv0", "ba0", "agb1", "agv1", "ba1","N0","N1","N_D", "N_R")
+  # 
   
   
   

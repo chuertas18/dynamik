@@ -17,7 +17,7 @@ database=d0
 model=2
 var1="treat"
 var2="habitat"
-iterations=10
+iterations=500
 varT="period"
 varO="state"
 
@@ -265,6 +265,7 @@ if (model==1) {
   names(nd1)[4:5] = c('Parameter', 'Group')
   nd1 = ddply(nd1, .(variable), summarize,
               median = median(value),
+			  mean = mean(value),
               ymax = HPDinterval(as.mcmc(value))[1],
               ymin = HPDinterval(as.mcmc(value))[2],
               Parameter = unique(Parameter),
@@ -300,6 +301,7 @@ if (model==1) {
   nd2 = data.frame('var1' = levels(database$variable1),
                    'N0' = tapply(database$O!="recr", database$variable1, sum),
                    'm_med' = apply(m, 2, median),
+				   'm_mean' = apply(m, 2, mean),
                    'm_lower' = HPDinterval(as.mcmc(m))[,1],
                    'm_upper' = HPDinterval(as.mcmc(m))[,2],
                    'r_med' = apply(r, 2, median),
@@ -340,6 +342,7 @@ if (model==1) {
   nd3 = data.frame('id' = levels(fit3$jags_data$lv2_idx),
                    'var'= levels(fit3$jags_data$lv2_idx),
                    'm_med' = apply(m, 2, median),
+				   'm_mean' = apply(m, 2, mean),
                    'm_lower' = HPDinterval(as.mcmc(m))[,1],
                    'm_upper' = HPDinterval(as.mcmc(m))[,2],
                    'r_med' = apply(r, 2, median),
