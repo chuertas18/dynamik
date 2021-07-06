@@ -3,7 +3,7 @@
 # dataframe=d0
 # shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Ferry/TopoFerry_corr_s250_boucle.shp"
 # sq="250-habitat" # "125-habitat" / "250-habitat" / 250 / 125
-# norm=TRUE
+norm=TRUE
 ###################
 dynamics_grid_ground_habitats_250<-function(dataframe,shp_grid,sq,norm){
   library(raster)

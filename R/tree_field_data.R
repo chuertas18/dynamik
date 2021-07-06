@@ -6,13 +6,17 @@
 #' @export tree_field_data
 #' @examples
 
-database=datos
-year0=1991
-year1=1993
-p16=FALSE
+# database=datos[which(datos$trait=="T4"),]
+# year0=2010
+# year1=2020
+# p16=TRUE
+
+
 
 tree_field_data <- function(database,year0,year1,p16) {
   library(data.table)
+  source("D:/CLAUDIA/github/dynamik/R/AGB_eq.R")
+  source("D:/CLAUDIA/github/dynamik/R/height_eq.R")
   ## Database subset for each year
   period = year1 - year0
   datos <-as.data.table(database) # The subset becomes more efficient if it is transformed into datatable

@@ -9,11 +9,11 @@
 # nom_out<-"gaps_leitold_2009_2015_surface"
 # shp_grid<-"D:/GitHub/Paper_productivity/DATA/GRILLE/grille_125_gaps.shp"
 #
-# dir<-"D:/temp/delta"
-# gaps_nom<-"Delta_maxCHM_FO_PAR_2015_2019_Plot_1_Leitold"
+# dir<-"Y:/users/ClaudiaHuertas/Mortality/Temp/delta"
+# gaps_nom<-"Hmax_FO_PAR_2009_2019_dec_avsepoct"
 # # couche<-"Delta_maxCHM_FO_PAR_2015_2019_Plot_1_Leitold.shp"
-# year<-"2015_2019"
-# nom_out<-"gaps_leitold_2015_2019_surface"
+# year<-"2009_2019"
+# nom_out<-"gaps_leitold_2009_2019_surface"
 # shp_grid<-"Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
 
 # year1<-2015
@@ -91,6 +91,7 @@ lidar_metrics_gaps<-function(dir,gaps_nom,year,nom_out,shp_grid)
   #gaps_shp<-over(gaps_shp, shp_grid, returnList = TRUE)
   gaps_shp=intersect(shp_grid,gaps_shp)
   head(gaps_shp)
+  ### Calculate the id_gaps in QGIS
   gaps_shp_agg=aggregate(gaps_shp[,c("id_gaps")],by = list(square=gaps_shp$square),FUN = length)
 
   data_s=merge(gaps_grid[,c("square","trait","square_250","parcelle","lei")],as.data.frame(gaps_shp_agg),by="square")

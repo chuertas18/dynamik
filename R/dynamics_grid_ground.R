@@ -7,7 +7,7 @@
 #}columna= # numero columna de shapefile
 #
 # head(dataframe)
-# dataframe=d0
+# dataframe=d0_P16
 # shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
 # sq=125
 ###################

@@ -6,9 +6,9 @@
 #' @export tree_field_data
 #' @examples
 
-# database=datos
-# year0=2019
-# year1=2019
+database=datos_hab
+year0=2017
+year1=2019
 
 
 tree_field_data_bd_habitats <- function(database,year0,year1) {
@@ -89,6 +89,7 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
                                                                ba_dead,
                                                                agb_dead
                                          )])) 
+  
   
   df = unique(merge(extract_year0, extract_year1, by = "idtree", all = T))
   # head(df)

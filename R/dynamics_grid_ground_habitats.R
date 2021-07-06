@@ -191,4 +191,4 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
   #
 
 
-mean(data_norm$N0)
+# mean(data_norm$N0)
