@@ -7,9 +7,10 @@
 #}columna= # numero columna de shapefile
 #
 # head(dataframe)
-# dataframe=d0_P16
-# shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
-# sq=125
+
+dataframe=d0_SP16
+shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
+sq=125
 ###################
 dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   library(raster)
@@ -63,6 +64,7 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   # head(g_db)
   # head(database)
   # head(database)
+  table(database$state)
 
   db_dead<-database[which(database$state=='dead'),]
   #db_surv<-database[which(database$state=='survivors'),]

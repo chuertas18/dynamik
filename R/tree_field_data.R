@@ -6,10 +6,10 @@
 #' @export tree_field_data
 #' @examples
 
-# database=datos[which(datos$trait=="T4"),]
-# year0=2010
-# year1=2020
-# p16=TRUE
+# database=datos[which(datos$trait!="T4"),]
+# year0=2009
+# year1=2019
+# p16=FALSE
 
 
 
