@@ -20,11 +20,17 @@
 
 # chm1<-"DATA/CHM/ANPP4/CHM2015_SAR20_12ppm.tif"
 
+# dir="Y:/users/ClaudiaHuertas/Mortality/Temp/delta"
+# gaps_nom="Hmax_FO_PAR_2009_2015_dec_avsepoct"
+# year<-"2009_2015"
+# shp_grid<-"Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
+
 
 lidar_metrics_gaps<-function(dir,gaps_nom,year,nom_out,shp_grid)
 {
   nombre=nom_out
   y=year
+  # source("Y:/users/ClaudiaHuertas/MANUSCRIT/4_Article2_Mortality/Scripts/gaps_leitold.R")
   file=paste0(dir,"/",gaps_nom,"_surface.tif")
   file_shp=paste0(dir,"/",gaps_nom,".shp")
   print(paste0("Procesando... ",nom_out))
@@ -38,6 +44,7 @@ lidar_metrics_gaps<-function(dir,gaps_nom,year,nom_out,shp_grid)
 
   #library(RasterMachine) # My library
   library(raster)
+  
   
   ####################################################################################################
   ################################################################ FUNCTIONS
