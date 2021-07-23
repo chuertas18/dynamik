@@ -20,10 +20,10 @@
 
 # chm1<-"DATA/CHM/ANPP4/CHM2015_SAR20_12ppm.tif"
 
-# dir="Y:/users/ClaudiaHuertas/Mortality/Temp/delta"
-# gaps_nom="Hmax_FO_PAR_2009_2015_dec_avsepoct"
-# year<-"2009_2015"
-# shp_grid<-"Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
+dir="Y:/users/ClaudiaHuertas/Mortality/Temp/delta"
+gaps_nom="Hmax_FO_PAR_2009_2019_compose"
+year<-"2009_2019"
+shp_grid<-"Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
 
 
 lidar_metrics_gaps<-function(dir,gaps_nom,year,nom_out,shp_grid)
@@ -58,7 +58,8 @@ lidar_metrics_gaps<-function(dir,gaps_nom,year,nom_out,shp_grid)
   }
 
 
-  ###########################################################################################
+  
+###########################################################################################
   gaps=raster(file)
   crs(gaps) <- "+init=epsg:32622"
   #gaps<-cleanupCHM(gaps,60) # My library RasterMachine
@@ -96,14 +97,16 @@ lidar_metrics_gaps<-function(dir,gaps_nom,year,nom_out,shp_grid)
   names(gaps_grid)[names(gaps_grid) == paste0(gaps_nom,"_surface")]<-"lei"
 
   #gaps_shp<-over(gaps_shp, shp_grid, returnList = TRUE)
-  gaps_shp=intersect(shp_grid,gaps_shp)
-  head(gaps_shp)
-  ### Calculate the id_gaps in QGIS
-  gaps_shp_agg=aggregate(gaps_shp[,c("id_gaps")],by = list(square=gaps_shp$square),FUN = length)
+  # gaps_shp=intersect(shp_grid,gaps_shp)
+  # head(gaps_shp)
+  # ### Calculate the id_gaps in QGIS
+  # gaps_shp_agg=aggregate(gaps_shp[,c("id_gaps")],by = list(square=gaps_shp$square),FUN = length)
+  # 
+  # data_s=merge(gaps_grid[,c("square","trait","square_250","parcelle","lei")],as.data.frame(gaps_shp_agg),by="square")
+  # head(data_s)
+  # 
+  data_s=gaps_grid[,c("square","trait","square_250","parcelle","lei")]
 
-  data_s=merge(gaps_grid[,c("square","trait","square_250","parcelle","lei")],as.data.frame(gaps_shp_agg),by="square")
-  head(data_s)
-  names(data_s)[names(data_s) == "id_gaps"]<-"N_gaps"
  #summary(toto@data)  
   # cols_period<-c("acc_med", "acc_med2", "acc_mean", "aff_med", "aff_mean", "acc_mean2", "aff_med2",
   #                "aff_mean2", "aff_sum", "acc_sum","absmed","absmean")
