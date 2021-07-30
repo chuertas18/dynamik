@@ -8,7 +8,7 @@
 #
 # head(dataframe)
 
-# dataframe=d0_SP16
+# dataframe=d0
 # shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
 # sq=125
 ###################
@@ -43,16 +43,16 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
 
   g_db<-merge_grid(grid,id_tree_list)
   
-  if (sq==60|sq==62|sq==62.5) {
-    columna=2
-  } else if (sq==125) {
-    #columna=5
-    names(g_db)[names(g_db) == "square_125"]<-"square"
-  } else if (sq==250) {
-    names(g_db)[names(g_db) == "square_250"]<-"square"
-  }else if (sq==5) {
-    columna=6
-  }else{print("Error shapefile")}
+  # if (sq==60|sq==62|sq==62.5) {
+  #   columna=2
+  # } else if (sq==125) {
+  #   #columna=5
+  #   names(g_db)[names(g_db) == "square_125"]<-"square"
+  # } else if (sq==250) {
+  #   names(g_db)[names(g_db) == "square_250"]<-"square"
+  # }else if (sq==5) {
+  #   columna=6
+  # }else{print("Error shapefile")}
   
   # names(g_db)[columna]<-"square"
   # names(g_db)<-c("idtree", "square", "xfield", "yfield")
@@ -130,8 +130,10 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   agg_WD1=aggregate(db_surv_rec[,c("wd")],by = list(square=db_surv_rec$square),FUN = mean)
   names(agg_WD1)[2]<-"WD1"
 
-  agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "square"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","parcelle","trait")]))))
+  agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "square"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","parcelle","trait","period","per")]))))
   #head(agg_union)
+  names(agg_union)[names(agg_union) == "per"] <- "period_ground"
+  agg_union$sq=sq
 
 
 
@@ -156,7 +158,7 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
     return(x_norm)}
 
   data_norm<-agg_union
-  data_norm[,cols_period] = apply(data_norm[,cols_period], 2, norm_period_fun,period=unique(dataframe$period))
+  data_norm[,cols_period] = apply(data_norm[,cols_period], 2, norm_period_fun,period=data_norm$period)
   data_norm[,cols_square] = apply(data_norm[,cols_square], 2, norm_square_fun, res_square=sq)
 
   return(data_norm)

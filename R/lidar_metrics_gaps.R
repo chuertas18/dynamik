@@ -20,16 +20,26 @@
 
 # chm1<-"DATA/CHM/ANPP4/CHM2015_SAR20_12ppm.tif"
 
-dir="Y:/users/ClaudiaHuertas/Mortality/Temp/delta"
-gaps_nom="Hmax_FO_PAR_2009_2019_compose"
-year<-"2009_2019"
-shp_grid<-"Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
+# dir="Y:/users/ClaudiaHuertas/Mortality/Temp/delta"
+# gaps_nom="Hmax_FO_PAR_2009_2019_compose"
+# year<-"2009_2019"
+# shp_grid<-"Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
+
+# dir="Y:/users/ClaudiaHuertas/Mortality/Temp/delta"
+# gaps_nom=gaps_nom
+# year0=year0_lidar
+# year1=year1_lidar
+# nom_out
+# shp_grid
+# sq=scuad
 
 
-lidar_metrics_gaps<-function(dir,gaps_nom,year,nom_out,shp_grid)
+lidar_metrics_gaps<-function(dir,gaps_nom,year0,year1,nom_out,shp_grid,sq)
 {
   nombre=nom_out
-  y=year
+  y=paste0(year0,"-",year1)
+  year0=as.numeric(year0)
+  year1=as.numeric(year1)
   # source("Y:/users/ClaudiaHuertas/MANUSCRIT/4_Article2_Mortality/Scripts/gaps_leitold.R")
   file=paste0(dir,"/",gaps_nom,"_surface.tif")
   file_shp=paste0(dir,"/",gaps_nom,".shp")
@@ -106,25 +116,8 @@ lidar_metrics_gaps<-function(dir,gaps_nom,year,nom_out,shp_grid)
   # head(data_s)
   # 
   data_s=gaps_grid[,c("square","trait","square_250","parcelle","lei")]
-
- #summary(toto@data)  
-  # cols_period<-c("acc_med", "acc_med2", "acc_mean", "aff_med", "aff_mean", "acc_mean2", "aff_med2",
-  #                "aff_mean2", "aff_sum", "acc_sum","absmed","absmean")
-  #
-  # ### Function to normalize periods
-  # norm_period_fun<-function(x,period) { (as.numeric(as.character(x)))/period}
-
-  # data_s<-lidar_union(gaps_grid,chm_s,"square")
-  # data_s[,cols_period] = apply(data_s[,cols_period], 2, norm_period_fun,period=period)
-  data_s$year=y
-  # data_s$carre=60
-  #data_s<-data_s[,c("square_60", "acc_med", "acc_med2", "acc_mean", "year0", "year1","square")]
-  # data_s<-merge(data_s,df_shp_grid[,c("square","Parcelle","trait")],by="square")
-  # # names(data_s)<-c("square", "acc_med", "acc_med2", "acc_mean", "year0", "year1","square","trait")
-  # names(data_s)[1]<-"square"
-  # head(data_s)
-
-
+  data_s$period_lidar=y
+  data_s$GF=(data_s$lei/(year1-year0))/(sq^2)
   #table1<-rbind(data_60,data_120,data_240)
   # table1<-data_s
   # table2<-cbind(nombre,file0,file1)
