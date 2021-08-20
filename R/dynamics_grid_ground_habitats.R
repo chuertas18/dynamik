@@ -8,8 +8,8 @@
 #
 # head(dataframe)
 # dataframe=d0
-# shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Ferry/TopoFerry_corr_s250_boucle.shp"
-# sq="250-habitat" # "125-habitat" / "250-habitat" / 250 / 125
+# shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Ferry/TopoFerry_corr_s125_boucle.shp"
+# sq="125-habitat" # "125-habitat" / "250-habitat" / 250 / 125
 # norm=TRUE
 ###################
 dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
@@ -18,14 +18,10 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
   crs(shp_grid) <- "+init=epsg:32622"
   grid<-shp_grid[order(shp_grid$id_union),]
 
-
-
-  
   # id_tree_list
   id_tree_list<-unique(dataframe[,c('idtree','xutm','yutm')])
   coordinates(id_tree_list) <- ~xutm+ yutm # Convert to SpatialPointsDataFrame
   crs(id_tree_list) <- "+init=epsg:32622"
-
 
   merge_grid <-function (grid,id_tree_list){
     require(maptools)
@@ -37,6 +33,8 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
     # n.grid <- rename(as.data.table(n.grid), c("g.grid" = varname))
     return(n.grid)
   }
+  
+ 
 
 
   # if (sq==60|sq==62|sq==62.5) {
@@ -48,8 +46,6 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
   # }else if (sq=="125-habitat"|sq=="250-habitat") {
   #   columna=12
   # }else{print("Error shapefile")}
-
-
 
   g_db<-merge_grid(grid,id_tree_list)
   #names(g_db)[columna]<-"square"
@@ -108,6 +104,7 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
   stem_num=function (idtree) {length(na.omit(idtree))}
   agg_N_D=aggregate(db_dead[,c("idtree")],by = list(id_union=db_dead$id_union),FUN = stem_num)
   names(agg_N_D)=c("id_union","N_D")
+  
 
   #db_rec<-(database[which(database$state=='recruits'),])
   # Recruits number of stems
@@ -138,9 +135,17 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
   agg_DBH1=aggregate(db_surv_rec[,c("dbh1")],by = list(id_union=db_surv_rec$id_union),FUN = mean)
   names(agg_DBH1)[2]<-"DBH1"
   
+  # Ecuacion qmd - Diametre quadratique moyen en cm
+  qmd_fun<-function(vec_dbh){ # Diametre quadratique moyen en cm
+    sqrt(sum(na.omit(vec_dbh^2))/length(na.omit(vec_dbh)))
+  }
+  agg_qmd0=aggregate(db_surv_dead[,c("dbh0")],by = list(id_union=db_surv_dead$id_union),FUN = qmd_fun)
+  names(agg_qmd0)[2]<-"qmd0"
+  agg_qmd1=aggregate(db_surv_dead[,c("dbh1")],by = list(id_union=db_surv_dead$id_union),FUN = qmd_fun)
+  names(agg_qmd1)[2]<-"qmd1"
  
 
- agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "id_union"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","parcelle","trait","habitat","id_union","area_ha")]))))
+ agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "id_union"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,agg_qmd0,agg_qmd1,unique(database[,c("square","parcelle","trait","habitat","id_union","area_ha")]))))
   
   # head(agg_union)
 

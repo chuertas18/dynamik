@@ -8,9 +8,9 @@
 #
 # head(dataframe)
 
-# dataframe=d0
-# shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
-# sq=125
+dataframe=d0
+shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
+sq=125
 ###################
 dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   library(raster)
@@ -129,23 +129,26 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   names(agg_WD0)[2]<-"WD0"
   agg_WD1=aggregate(db_surv_rec[,c("wd")],by = list(square=db_surv_rec$square),FUN = mean)
   names(agg_WD1)[2]<-"WD1"
+  
+  
+  # Ecuacion qmd - Diametre quadratique moyen en cm
+  qmd_fun<-function(vec_dbh){ # Diametre quadratique moyen en cm
+    sqrt(sum(na.omit(vec_dbh^2))/length(na.omit(vec_dbh)))
+  }
+  agg_qmd0=aggregate(db_surv_dead[,c("dbh0")],by = list(square=db_surv_dead$square),FUN = qmd_fun)
+  names(agg_qmd0)[2]<-"qmd0"
+  agg_qmd1=aggregate(db_surv_dead[,c("dbh1")],by = list(square=db_surv_dead$square),FUN = qmd_fun)
+  names(agg_qmd1)[2]<-"qmd1"
 
-  agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "square"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","parcelle","trait","period","per")]))))
+  agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "square"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,agg_qmd0,agg_qmd1,unique(database[,c("square","parcelle","trait","period","per")]))))
   #head(agg_union)
   names(agg_union)[names(agg_union) == "per"] <- "period_ground"
   agg_union$sq=sq
 
 
-
-
-
-
-
   ## Normalization###
   cols_period =  c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "N_D", "N_R")
   cols_square = c("AGB_G", "AGV_G", "BA_G", "AGB_D", "AGV_D", "BA_D", "agb0", "agv0", "ba0", "agb1", "agv1", "ba1","N0","N1","N_D", "N_R")
-
-
 
 
   ### Function to normalize periods
