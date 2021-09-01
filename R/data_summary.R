@@ -1,3 +1,9 @@
+#+++++++++++++++++++++++++
+# Function to calculate the mean and the standard deviation
+# for each group
+# http://www.sthda.com/english/wiki/ggplot2-error-bars-quick-start-guide-r-software-and-data-visualization
+#+++++++++++++++++++++++++
+
 data_summary <- function(data, varname, groupnames){
   require(plyr)
   summary_func <- function(x, col){
