@@ -7,7 +7,7 @@
 #' @examples
 
 # database=datos[which(datos$trait!="T4"),]
-# year0=2009
+# year0=1999
 # year1=2019
 # p16=FALSE
 
