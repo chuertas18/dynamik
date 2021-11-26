@@ -128,6 +128,9 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
   names(agg_WD1)[2]<-"WD1"
   
   
+  agg_DBH_D=aggregate(db_dead[,c("dbh0")],by = list(id_union=db_dead$id_union),FUN = mean)
+  names(agg_DBH_D)[2]<-"DBH_D" # Se puede reemplazar dbh dead
+  
   agg_DBH0=aggregate(db_surv_dead[,c("dbh0")],by = list(id_union=db_surv_dead$id_union),FUN = mean)
   names(agg_DBH0)[2]<-"DBH0"
   
@@ -143,9 +146,11 @@ dynamics_grid_ground_habitats<-function(dataframe,shp_grid,sq,norm){
   names(agg_qmd0)[2]<-"qmd0"
   agg_qmd1=aggregate(db_surv_dead[,c("dbh1")],by = list(id_union=db_surv_dead$id_union),FUN = qmd_fun)
   names(agg_qmd1)[2]<-"qmd1"
+  agg_qmd_dead=aggregate(agg_DBH_D[,c("DBH_D")],by = list(id_union=agg_DBH_D$id_union),FUN = qmd_fun)
+  names(agg_qmd_dead)[2]<-"qmd_dead"
  
 
- agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "id_union"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,agg_qmd0,agg_qmd1,unique(database[,c("square","parcelle","trait","habitat","id_union","area_ha")]))))
+ agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "id_union"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,agg_qmd0,agg_qmd1,agg_qmd_dead,unique(database[,c("square","parcelle","trait","habitat","id_union","area_ha")]))))
   
   # head(agg_union)
 
