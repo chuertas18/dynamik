@@ -1,60 +1,6 @@
-# rm(list=setdiff(ls(), c("datos_postgres","tree_field_data","dynamics_grid_ground","lidar_metrics")))
-# ##########################################################################################################################
-# #######
-# ##########################################################################################################################
-# library(dynamik)
-# library(raster) # grid
-#
-#
-#
-# ##########################################################################################################################
-# work_dir<-"D:/temp"
-# setwd(work_dir)
-# wd_data<-"D:/temp/Data/Wood_Density_Paracou_all_idtree8419_200520.csv" # Table with wood density values per idtree # Table with wood density values per idtree
-#
-# ##########################################################################################################################
-# # FUNCTIONS
-# ##########################################################################################################################
-#
-# ##########################################################################################################################
-# if(exists("datos_postgres")==FALSE){
-#   datos_postgres=request_postgres(dbname="paracou",host="localhost",port=5432,user="postgres",password="postgres",sql_postgres="SELECT DISTINCT * FROM  paracou.bd_plots_corrected WHERE dbh>9.6 ORDER BY idtree, censusyear;")
-# }
-#
-# head(datos_postgres,10)
-# wd_data<-read.table(file = wd_data, sep=",",dec=".",header=TRUE) # Wood density table
-#
-# # Selection of only the plot data
-# datos<-datos_postgres
-# # Join to the wood density database
-# datos=merge(datos,wd_data[,c("idtree","wd")], by="idtree", all.x=T)
-# head(datos)
-#
-# d0=tree_field_data(datos,2011,2013)
-# d_sq=dynamics_grid_ground(dataframe=d0,shp_grid="D:/CLAUDIA/PAPERS/5_Productivity/Scripts_AGB_incremental/DATA/GRILLE/Plots120x120.shp",sq=120)
-# head(d_sq)
-
-
-# # Calculates turnover indicators for a certain grid
-# if(chm_rotate==TRUE){
-#     d1=dynamics_grid_ground(d0,"D:/temp/grille/grille_250.shp",250)
-#     #d1=dynamics_grid_ground(d0,"D:/temp/grille/grille_125.shp",125)
-# }
-
-##########################################################################
-#### SQUARE 60
-##########################################################################
-# grilla="D:/CLAUDIA/PAPERS/5_Productivity/Scripts_AGB_incremental/DATA/GRILLE/Plots60x60_s38.shp"
-# resol=60
-# db_loop="D:/temp/data_lidar_60.csv"
-# datos
-# year0=2015
-# year1=2019
-# period_nom=year1-year0
-# # chm_rotate=FALSE
 datos=datos
 db_loop="D:/temp/data_lidar_64.csv"
-grilla="D:/GitHub/Paper_productivity/DATA/GRILLE/grille_125_s38.shp"
+grilla="D:/CLAUDIA/Drive/TESIS/Final_manuscript/Github/Manuscrit/Chapter3_AGWNPP/Data/Grids/grille_125_s38.shp"
 resol=125
 
 union_regression_mask <- function(datos, db_loop, grilla, resol) {

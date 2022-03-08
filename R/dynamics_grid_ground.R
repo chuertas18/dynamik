@@ -8,8 +8,8 @@
 #
 # head(dataframe)
 
-# dataframe=d0_SP16
-# shp_grid="Y:/users/ClaudiaHuertas/Mortality/Data/Grille/grille_125_s38.shp"
+# dataframe=d0
+# shp_grid="D:/CLAUDIA/Drive/TESIS/Final_manuscript/Github/Manuscrit/Chapter3_AGWNPP/Data/Grids/otra/grille_125_s38.shp"
 # sq=125
 ###################
 dynamics_grid_ground<-function(dataframe,shp_grid,sq){
@@ -58,13 +58,15 @@ dynamics_grid_ground<-function(dataframe,shp_grid,sq){
   # names(g_db)<-c("idtree", "square", "xfield", "yfield")
   g_db$square=as.numeric(g_db$square)
   database<-merge(dataframe,g_db[,c("idtree","square","parcelle","trait")],by = c("idtree","square"))
+  #database<-merge(dataframe,g_db[,c("idtree","square","Parcelle","trait")],by = c("idtree"))
 
 
 
   # head(g_db)
   # head(database)
   # head(database)
-  table(database$state)
+  # table(database$state)
+  # table(database$square)
 
   db_dead<-database[which(database$state=='dead'),]
   #db_surv<-database[which(database$state=='survivors'),]

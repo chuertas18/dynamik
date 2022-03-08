@@ -10,7 +10,11 @@
 # year0=1999
 # year1=2019
 # p16=FALSE
-
+# datos$square=datos$square_125
+# database=datos
+# year0=1999
+# year1=2019
+# p16=FALSE
 
 
 tree_field_data <- function(database,year0,year1,p16) {
