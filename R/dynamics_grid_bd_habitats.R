@@ -144,7 +144,7 @@ dynamics_grid_bd_habitats<-function(database,sq){
   
  
 
- agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "id_union"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","parcela","treat","habitat","id_union","area")]))))
+ agg_union<-as.data.frame(Reduce(function(...) merge(..., all = TRUE, by = "id_union"),list(agg_G,agg_D,agg_stock0,agg_stock1,agg_stock_N0,agg_stock_N1,agg_N_D,agg_N_R,agg_WD0,agg_WD1,unique(database[,c("square","parcela","treat","habitat","id_union")]))))
   
   # head(agg_union)
 
@@ -167,12 +167,12 @@ dynamics_grid_bd_habitats<-function(database,sq){
   # Function that allows to normalize by surface, the variable that is indicated is the resolution
   # in square meters and a variable in hectares is obtained
   # res_square in metres
-  norm_area<-function(x,area) { (as.numeric(as.character(x)))/area}
+  # norm_area<-function(x,area) { (as.numeric(as.character(x)))/area}
 
   
   data_norm<-agg_union
   data_norm[,cols_period] = apply(data_norm[,cols_period], 2, norm_period_fun,period=unique(database$period))
-  data_norm[,cols_square] = apply(data_norm[,cols_square], 2, norm_area, area=agg_union$area)
+  # # data_norm[,cols_square] = apply(data_norm[,cols_square], 2, norm_area, area=agg_union$area)
   
   return(data_norm)
 

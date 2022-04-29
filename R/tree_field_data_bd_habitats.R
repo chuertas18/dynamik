@@ -7,7 +7,7 @@
 #' @examples
 
 database=datos_postgres
-year0=2009
+year0=2013
 year1=2019
 
 
@@ -18,30 +18,12 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
   period = year1 - year0
   datos <-as.data.table(database) # The subset becomes more efficient if it is transformed into datatable
   extract_year0 = na.omit(unique(datos[censusyear == year0 & codealive_cor == T, .(idtree,
-                                                               dbh,
-                                                               censusyear,
-                                                               dbh_dead,
-                                                               family,
-                                                               genus,
-                                                               xfield,
-                                                               yfield,
-                                                               xutm,
-                                                               yutm,
-                                                               habitat,
-                                                               square_250,
-                                                               square_125,
-                                                               square_62,
-                                                               plot,
-                                                               trait,
-                                                               ba,
-                                                               agb,
-                                                               agv,
-                                                               wd,
-                                                               area,
-                                                               ba_dead,
-                                                               agb_dead,
-                                                               agv_dead
-                                                               )])) 
+                                                               dbh,censusyear,dbh_dead,
+                                                               family,genus,xfield,yfield,
+                                                               xutmr,yutmr,habitat,square_250,
+                                                               square_125,square_62,plot,
+                                                               trait,ba,agb,agv,wd,ba_dead,
+                                                               agb_dead,agv_dead)])) 
   
   
 
@@ -70,30 +52,12 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
   #                                                              agb_dead)])) ##### Revisar
   # 
   extract_year1 = na.omit(unique(datos[censusyear == year1 & codealive_cor == T, .(idtree,
-                                                               dbh,
-                                                               censusyear,
-                                                               dbh_dead,
-                                                               family,
-                                                               genus,
-                                                               xfield,
-                                                               yfield,
-                                                               xutm,
-                                                               yutm,
-                                                               habitat,
-                                                               square_250,
-                                                               square_125,
-                                                               square_62,
-                                                               plot,
-                                                               trait,
-                                                               ba,
-                                                               agb,
-                                                               agv,
-                                                               wd,
-                                                               area,
-                                                               ba_dead,
-                                                               agb_dead,
-                                                               agv_dead
-                                         )])) 
+                                                                                   dbh,censusyear,dbh_dead,
+                                                                                   family,genus,xfield,yfield,
+                                                                                   xutmr,yutmr,habitat,square_250,
+                                                                                   square_125,square_62,plot,
+                                                                                   trait,ba,agb,agv,wd,ba_dead,
+                                                                                   agb_dead,agv_dead)])) 
   
   
   df = unique(merge(extract_year0, extract_year1, by = "idtree", all = T))
@@ -127,8 +91,8 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
   df$genus <- ifelse(is.na(df$genus.x) , df$genus.y, df$genus.x)
   df$xfield <- ifelse(is.na(df$xfield.x) , df$xfield.y, df$xfield.x)
   df$yfield <- ifelse(is.na(df$yfield.x) , df$yfield.y, df$yfield.x)
-  df$xutm <- ifelse(is.na(df$xutm.x) , df$xutm.y, df$xutm.x)
-  df$yutm <- ifelse(is.na(df$yutm.x) , df$yutm.y, df$yutm.x)
+  df$xutmr <- ifelse(is.na(df$xutmr.x) , df$xutmr.y, df$xutmr.x)
+  df$yutmr <- ifelse(is.na(df$yutmr.x) , df$yutmr.y, df$yutmr.x)
   df$habitat <- ifelse(is.na(df$habitat.x) , df$habitat.y, df$habitat.x)
   df$square_250<- ifelse(is.na(df$square_250.x) , df$square_250.y, df$square_250.x)
   df$square_125<- ifelse(is.na(df$square_125.x) , df$square_125.y, df$square_125.x)
@@ -138,6 +102,7 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
   df$ba_dead <-ifelse(is.na(df$ba_dead.x) , df$ba_dead.y, df$ba_dead.x)
   df$agb_dead <-ifelse(is.na(df$agb_dead.x) , df$agb_dead.y, df$agb_dead.x)
   df$agv_dead <-ifelse(is.na(df$agv_dead.x) , df$agv_dead.y, df$agv_dead.x)
+
 
 #### El siguiente es para poder hacer los calculos de mortalidad con las columnas ba1, agb1
 
@@ -167,8 +132,8 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
                     "wd",
                     "xfield",
                     "yfield",
-                    "xutm",
-                    "yutm",
+                    "xutmr",
+                    "yutmr",
                     "habitat",
                     "square_250",
                     "square_125",
@@ -179,9 +144,7 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
                     "agb.x",
                     "agb.y",
                    "agv.x",
-                   "agv.y",
-                    "area"
-    )
+                   "agv.y")
   
   
 
@@ -209,9 +172,7 @@ tree_field_data_bd_habitats <- function(database,year0,year1) {
                 "agb0",
                 "agb1",
                 "agv0",
-                "agv1",
-                "area"
-    )
+                "agv1")
   # names(df)<-c("idtree", "dbh0", "censusyear0", "dbh_dead0", "dbh1", "censusyear1",
   #              "state", "dbh_dead", "family", "genus","wd", "xfield", "yfield")
 
